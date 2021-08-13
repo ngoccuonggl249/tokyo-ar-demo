@@ -1,0 +1,89 @@
+@font-face {
+    font-family: MyFont;
+    src: url('../assets/font/font.ttc');
+}
+
+body {
+    font-family: MyFont;
+}
+
+.btn-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+
+.btn-action {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    object-fit: contain;
+}
+
+.description {
+    display: none;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 18px;
+    background: #000000b8;
+    color: #FFF;
+}
+
+.description-title {
+    font-size: 26px;
+}
+
+.modal {
+    transition: all .3s;
+}
+
+.modal-backdrop {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #00000088;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-popup {
+    position: relative;
+    background: #FFF;
+    color: #8490a5;
+    box-shadow: 2px 2px 5px 0 #333;
+    border-radius: 15px;
+    width: calc(100% - 60px);
+    height: calc(100% - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.modal-title {
+    font-size: 54px;
+}
+
+.modal-desc {
+    margin-top: 32px;
+    font-size: 26px;
+}

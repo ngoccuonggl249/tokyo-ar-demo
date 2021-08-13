@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marker B - Based</title>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="js/main.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body style="margin : 0px; overflow: hidden;">
+
+<a-scene embedded arjs='sourceType: webcam; patternRatio: 0.9; debugUIEnabled: false;'>
+
+    <a-marker
+        type="pattern"
+        url="assets/marker/marker_A/pattern-marker_A.patt"
+        detect-marker-a="sound: assets/mp3/A_out.mp3"
+        detect-marker="id: a"
+    >
+        <a-image
+            id="image-marker-a"
+            src="assets/img/A_out/A_out_00000-min.png"
+            rotation="0 0 0"
+            position="0 0.5 0"
+            scale="1 1 1"
+        ></a-image>
+    </a-marker>
+
+
+    <a-marker
+        type="pattern"
+        url="assets/marker/marker_B/pattern-marker_B.patt"
+        detect-marker="id: b"
+    >
+        <a-entity
+            gltf-model="assets/gltf/fox.gltf"
+            scale="0.1 0.1 0.1"
+            animation-mixer
+        ></a-entity>
+    </a-marker>
+    <a-entity camera></a-entity>
+</a-scene>
+
+<div class="description">
+    <div class="description-title"></div>
+    <div class="description-content"></div>
+</div>
+
+
+<div class="btn-container">
+    <img id="btnReset" class="btn-action" alt="" src="./assets/img/icons/reload-min.png" />
+    <img id="btnDone" class="btn-action" alt="" src="./assets/img/icons/done-min.png" />
+</div>
+
+<div class="modal" hidden>
+    <div class="modal-backdrop">
+        <div class="modal-popup">
+            <img class="modal-close" alt="" src="assets/img/icons/close-min.png">
+            <div class="modal-title">
+                ARを体験いただき<br/>
+                ありがとうございました。
+            </div>
+            <div class="modal-desc">
+                引き続き、アンケートへのご協力をお願い致します。
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
