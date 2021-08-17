@@ -1,7 +1,7 @@
+// Data Models
 const models = [{
   id: 'a',
   render : `<a-image
-      id="image-marker-a"
       src="assets/img/A_out/A_out_00000-min.png"
       rotation="0 0 0"
       position="0 1 0"
@@ -21,16 +21,19 @@ const models = [{
   descriptionContent: '日本の里山に住む代表的な動物です。ネズミから農作物を守ってくれるため古くから大切な存在として扱われてきましたが、近年では森林伐採などの影響により野生に暮らすキツネの数は徐々に少なくなっています。',
 }]
 
-var modalShowing = null;
+var modelShowing = null;
 var $description;
 var $descriptionTitle;
 var $descriptionContent;
 
+// Handle Reset
 function resetModel() {
   $('a-marker').removeAttr('sound').empty();
   $description.hide();
+  modelShowing = null;
 }
 
+// Onload jQuery
 $(() => {
   $description = $('.description');
   $descriptionTitle = $('.description-title');
@@ -49,7 +52,8 @@ $(() => {
   });
 })
 
-AFRAME.registerComponent('detect-marker', {
+// Marker Handler
+AFRAME.registerComponent('marker-handler', {
   // Var
   _modelData: null,
 
@@ -61,6 +65,7 @@ AFRAME.registerComponent('detect-marker', {
     this.oldVisible = this.el.object3D.visible;
     this._$description = $(`#description`);
     this._modelData = models.find((modal) => modal.id === this.data.id )
+    this.$el =  $(this.el);
   },
   tick: function () {
     var newVisible = this.el.object3D.visible;
@@ -69,22 +74,19 @@ AFRAME.registerComponent('detect-marker', {
       this.oldVisible = newVisible;
       //When marker is showing
       if (newVisible === true) {
-        const $el =  $(this.el);
 
-        // Set modalShowing flag
-        if (modalShowing) {
-          if (modalShowing !== this._modelData.id) {
-            if (!this.el.getAttribute('sound')) {
-              this.el.removeAttribute('sound');
-            }
-            $el.empty();
+        // Set modelShowing flag
+        if (modelShowing && modelShowing !== this.data.id) {
+          if (!this.$el.attr('sound')) {
+            this.$el.removeAttr('sound');
           }
+          this.$el.empty();
           return;
         }
-        modalShowing = this._modelData.id;
+        modelShowing = this.data.id;
 
-        if (!$el.html()) {
-          $el.html($.parseHTML(this._modelData.render));
+        if (!this.$el.html()) {
+          this.$el.html($.parseHTML(this._modelData.render));
         }
 
         this._$description.show();
@@ -93,8 +95,8 @@ AFRAME.registerComponent('detect-marker', {
         $description.show();
 
       } else { //When marker is hiding
-        // Reset modalShowing flag
-        modalShowing = (modalShowing === this._modelData.id) ? null : modalShowing;
+        // Reset modelShowing flag
+        modelShowing = (modelShowing === this._modelData.id) ? null : modelShowing;
 
         $description.hide();
       }
@@ -102,7 +104,8 @@ AFRAME.registerComponent('detect-marker', {
   }
 });
 
-AFRAME.registerComponent('detect-marker-a', {
+// Handle load image
+AFRAME.registerComponent('image-handler', {
   // Var
   _images: [
     { url: 'assets/img/A_out/A_out_00000-min.png', time: 86.5777777778 },
@@ -155,7 +158,9 @@ AFRAME.registerComponent('detect-marker-a', {
   _isContinue: true,
   _timeOut: null,
   _changeImage: function (_img, _index) {
-    const $image = $('#image-marker-a');
+    const $image = this.$el.children('a-image');
+
+    if (!$image.length) return;
 
     return new Promise((resolve) => {
       this._timeOut = setTimeout(() => {
@@ -165,7 +170,9 @@ AFRAME.registerComponent('detect-marker-a', {
   },
   _callRequestImage: function () {
     if (this._isContinue) {
-      const $image = $('#image-marker-a');
+      const $image = this.$el.children('a-image');
+
+      if (!$image.length) return;
 
       this._images.reduce((promise, currentValue, currentIndex) => {
         return promise.then(() => {
@@ -183,9 +190,11 @@ AFRAME.registerComponent('detect-marker-a', {
 
   // AFRAME Method
   schema: {
+    id: {default: ''},
   },
   init: function () {
     this.oldVisible = this.el.object3D.visible;
+    this.$el = $(this.el);
   },
   tick: function () {
     var newVisible = this.el.object3D.visible;
@@ -193,15 +202,41 @@ AFRAME.registerComponent('detect-marker-a', {
       this.oldVisible = newVisible;
       //When marker is showing
       if (newVisible === true) {
-        if (!this.el.getAttribute('sound')) {
-          this.el.setAttribute('sound', 'src: url(' + this.attrValue.sound + '); autoplay: true; loop: true; refDistance: 1; volume: 5;');
-        }
         this._isContinue = true;
         this._callRequestImage();
       } else { //When marker is hiding
-        this.el.removeAttribute('sound');
         this._isContinue = false;
         clearTimeout(this._timeOut);
+      }
+    }
+  }
+});
+
+// Handle play sound
+AFRAME.registerComponent('sound-handler', {
+  // AFRAME Method
+  schema: {
+    id: {default: ''},
+    sound: {default: ''},
+  },
+  init: function () {
+    this.oldVisible = this.el.object3D.visible;
+    this.$el = $(this.el);
+  },
+  tick: function () {
+    var newVisible = this.el.object3D.visible;
+    if (newVisible !== this.oldVisible) {
+      this.oldVisible = newVisible;
+      //When marker is showing
+      if (newVisible === true) {
+        if (!modelShowing) {
+          modelShowing = this.data.id;
+        }
+        if (modelShowing === this.data.id && !this.$el.attr('sound') ) {
+          this.$el.attr('sound', `src: url(${this.data.sound}); autoplay: true; loop: true; refDistance: 1; volume: 5;`);
+        }
+      } else { //When marker is hiding
+        this.$el.removeAttr('sound');
       }
     }
   }
